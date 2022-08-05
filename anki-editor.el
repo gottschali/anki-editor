@@ -217,16 +217,32 @@ The result is the path to the newly stored media file."
 
 ;;; Org Export Backend
 
+;;; Because src block exports would interfere with cloze deletions
+;;; I customized the exporter to just wrap the code in HTML blocks
+;;; and use highlight.js to do the highlighting dynamically
 (defconst anki-editor--ox-anki-html-backend
   (if anki-editor-use-math-jax
       (org-export-create-backend
        :parent 'html
-       :transcoders '((latex-fragment . anki-editor--ox-latex-for-mathjax)
+       :transcoders '(
+                      (src-block . my-custom-src-block)
+                      (latex-fragment . anki-editor--ox-latex-for-mathjax)
                       (latex-environment . anki-editor--ox-latex-for-mathjax)))
     (org-export-create-backend
      :parent 'html
-     :transcoders '((latex-fragment . anki-editor--ox-latex)
+     :transcoders '((src-block . my-custom-src-block)
+                    (latex-fragment . anki-editor--ox-latex)
                     (latex-environment . anki-editor--ox-latex)))))
+
+(defun my-custom-src-block (src-block contents info)
+  "Transcode a SRC-BLOCK element from Org to ASCII.
+CONTENTS is nil.  INFO is a plist used as a communication
+channel."
+    (concat
+     (format "<pre><code class=\"language-%s\">\n %s \n</code></pre>"
+             (org-element-property :language src-block)
+             (org-element-normalize-string
+               (org-export-format-code-default src-block info)))))
 
 (defconst anki-editor--ox-export-ext-plist
   '(:with-toc nil :anki-editor-mode t))
