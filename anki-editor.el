@@ -373,6 +373,12 @@ The implementation is borrowed and simplified from ox-html."
            ((string-suffix-p ".mp3" path t)
               (format "[sound:%s]" path))
 
+           ;; ((string-suffix-p ".svg" path t)
+           ((string-match ".attach" raw-path)
+              (format "<img src=\"%s\"%s />"
+                (org-html-encode-plain-text path)
+                attributes))
+
            ;; External link with a description part.
            ((and path desc) (format "<a href=\"%s\"%s>%s</a>"
                                     (org-html-encode-plain-text path)
