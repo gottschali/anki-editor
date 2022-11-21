@@ -225,7 +225,7 @@ The result is the path to the newly stored media file."
       (org-export-create-backend
        :parent 'html
        :transcoders '(
-                      (src-block . my-custom-src-block)
+                      ;; (src-block . my-custom-src-block)
                       (latex-fragment . anki-editor--ox-latex-for-mathjax)
                       (latex-environment . anki-editor--ox-latex-for-mathjax)))
     (org-export-create-backend
